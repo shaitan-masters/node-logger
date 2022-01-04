@@ -10,15 +10,14 @@ import {
 	LoggerLevelName
 } from './types';
 
-
 const LOGGER_PROTECTOR: Symbol = Symbol();
 
 export class Logger {
-
 	private static winston: {
 		text?: WinstonLogger;
 		json?: WinstonLogger;
 	} = {};
+
 	private readonly transports: {
 		text: TransportStream[];
 		json: TransportStream[];
@@ -26,6 +25,7 @@ export class Logger {
 		text: [],
 		json: []
 	};
+
 	private static instance: Logger;
 
 	private readonly levels: Readonly<LoggerLevelType> = {
@@ -38,6 +38,7 @@ export class Logger {
 		debug       : 6,
 		debugEx     : 7
 	};
+
 	private readonly colors: Readonly<LoggerColorType> = {
 		emerg       : 'bold red',
 		errorRuntime: 'red',
@@ -59,6 +60,7 @@ export class Logger {
 		return Object.entries(this.levels).reduce((p, c) => {
 			const [key, value] = c;
 			p[value] = key;
+
 			return p;
 		}, {});
 	}
@@ -120,26 +122,28 @@ export class Logger {
 	}
 
 	private configureLoki(config: ClearedConfig): void {
-		config.loki ?
-		this.transports.json.push(
-			new winston.transports.Console({
-				format: winston.format.printf(info => info.message),
-				...typeof config.loki === 'object' && {
-					level: this.flippedLevels[config.loki.level]
-				}
-			})
-		) :
-		this.transports.text.push(
-			new winston.transports.Console({
-				format: winston.format.combine(
-					winston.format.timestamp(),
-					winston.format.colorize(),
-					winston.format.printf(
-						info => `[${moment(info.timestamp).format('YYYY-MM-DD HH:mm:ss')}] ${info.level}: ${info.message}`
+		if (config.loki) {
+			this.transports.json.push(
+				new winston.transports.Console({
+					format: winston.format.printf(info => info.message),
+					...typeof config.loki === 'object' && {
+						level: this.flippedLevels[config.loki.level]
+					}
+				})
+			);
+		} else {
+			this.transports.text.push(
+				new winston.transports.Console({
+					format: winston.format.combine(
+						winston.format.timestamp(),
+						winston.format.colorize(),
+						winston.format.printf(
+							info => `[${moment(info.timestamp).format('YYYY-MM-DD HH:mm:ss')}] ${info.level}: ${info.message}`
+						)
 					)
-				)
-			})
-		);
+				})
+			);
+		}
 	}
 
 	private configureFile(config: ClearedConfig): void {
@@ -150,6 +154,7 @@ export class Logger {
 				level   : this.flippedLevels[config.file.level]
 			})
 		);
+
 		config.file && this.transports.json.push(
 			new winston.transports.File({
 				filename: config.file.paths.json,
@@ -175,6 +180,7 @@ export class Logger {
 
 	private toLog(level: LoggerLevelName, text: string, meta: object) {
 		Logger.winston.text && Logger.winston.text.log(level, text);
+
 		if (Logger.winston.json) {
 			const ts = moment();
 

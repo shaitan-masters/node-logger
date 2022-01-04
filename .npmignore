@@ -1,0 +1,6 @@
+/src
+/node_modules
+/.git
+/.idea
+/tsconfig.json
+.DS_Store
