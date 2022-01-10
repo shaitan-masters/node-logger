@@ -31,7 +31,7 @@ export class Logger {
 
 	private static instance: Logger;
 
-	readonly levels: Readonly<LoggerLevelType> = {
+	static readonly levels: Readonly<LoggerLevelType> = {
 		emerg       : 0,
 		errorRuntime: 1,
 		errorLogic  : 2,
@@ -68,10 +68,10 @@ export class Logger {
 		Logger.instance = new Logger(LOGGER_PROTECTOR, config);
 	}
 
-	get defaultLevel(): LoggerLevel { return this.levels.info; }
+	get defaultLevel(): LoggerLevel { return Logger.levels.info; }
 
 	get flippedLevels() {
-		return Object.entries(this.levels).reduce((p, c) => {
+		return Object.entries(Logger.levels).reduce((p, c) => {
 			const [key, value] = c;
 			p[value] = key;
 
@@ -98,7 +98,7 @@ export class Logger {
 					Logger.winston[transport] = winston.createLogger({
 						transports: this.transports[transport],
 						...{
-							levels     : this.levels,
+							levels     : Logger.levels,
 							defaultMeta: {service: clearedConfig.shortCode ? clearedConfig.shortCode.toUpperCase() : 'APP'}
 						}
 					});
