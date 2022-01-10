@@ -1,6 +1,6 @@
 // noinspection JSMethodCanBeStatic
 
-import winston, {Logger as WinstonLogger} from 'winston';
+import winston, {level, Logger as WinstonLogger} from 'winston';
 import TransportStream from 'winston-transport';
 import moment from 'moment';
 import {
@@ -86,7 +86,7 @@ export class Logger {
 
 		const clearedConfig = this.clearConfig(config);
 
-		this.configureLoki(clearedConfig);
+		this.configureConsole(clearedConfig);
 		this.configureFile(clearedConfig);
 		this.configureDatadog(clearedConfig);
 
@@ -135,29 +135,31 @@ export class Logger {
 		return cleared;
 	}
 
-	private configureLoki(config: ClearedConfig): void {
+	private configureConsole(config: ClearedConfig): void {
 		if (config.loki) {
 			this.transports.json.push(
 				new winston.transports.Console({
 					format: winston.format.printf(info => info.message),
 					...typeof config.loki === 'object' && {
-						level: this.flippedLevels[config.loki.level]
+						level: config.loki?.level !== undefined ? this.flippedLevels[config.loki.level] : this.defaultLevel
 					}
 				})
 			);
-		} else {
-			this.transports.text.push(
-				new winston.transports.Console({
-					format: winston.format.combine(
-						winston.format.timestamp(),
-						winston.format.colorize(),
-						winston.format.printf(
-							info => `[${moment(info.timestamp).format('YYYY-MM-DD HH:mm:ss')}] ${info.level}: ${info.message}`
-						)
-					)
-				})
-			);
+			return;
 		}
+
+		this.transports.text.push(
+			new winston.transports.Console({
+				format: winston.format.combine(
+					winston.format.timestamp(),
+					winston.format.colorize(),
+					winston.format.printf(
+						info => `[${moment(info.timestamp).format('YYYY-MM-DD HH:mm:ss')}] ${info.level}: ${info.message}`
+					)
+				),
+				level : config.console?.level !== undefined ? this.flippedLevels[config.console.level] : this.defaultLevel
+			})
+		);
 	}
 
 	private configureFile(config: ClearedConfig): void {

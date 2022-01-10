@@ -3,17 +3,23 @@ export interface Config {
 	loki?: LoggerConfig | boolean;
 	file?: LoggerConfig & FileConfig;
 	datadog?: LoggerConfig & DatadogConfig;
+	console?: LoggerConfig & ConsoleConfig;
 }
 
 export interface ClearedConfig {
 	shortCode?: string;
-	loki?: { level: LoggerLevel; };
-	file?: { level: LoggerLevel; } & FileConfig;
-	datadog?: { level: LoggerLevel; } & DatadogConfig;
+	loki?: ClearedLoggerConfig;
+	file?: ClearedLoggerConfig & FileConfig;
+	datadog?: ClearedLoggerConfig & DatadogConfig;
+	console?: ClearedLoggerConfig & ConsoleConfig;
 }
 
 export interface LoggerConfig {
 	level?: LoggerLevel;
+}
+
+export interface ClearedLoggerConfig {
+	level: LoggerLevel;
 }
 
 export interface DatadogConfig {
@@ -27,6 +33,10 @@ export interface FileConfig {
 		text: string;
 		json: string;
 	};
+}
+
+export interface ConsoleConfig {
+
 }
 
 export type LoggerLevelName = 'emerg'
