@@ -52,3 +52,6 @@ export type LoggerLevelType = {
 export type LoggerColorType = {
 	[key in LoggerLevelName]: LoggerLevelColor;
 };
+export type LoggerLevelNames = {
+	[key in LoggerLevelName]: LoggerLevelName;
+};

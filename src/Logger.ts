@@ -1,3 +1,5 @@
+// noinspection JSMethodCanBeStatic
+
 import winston, {Logger as WinstonLogger} from 'winston';
 import TransportStream from 'winston-transport';
 import moment from 'moment';
@@ -7,8 +9,9 @@ import {
 	Config,
 	ClearedConfig,
 	LoggerLevel,
-	LoggerLevelName
-} from './types';
+	LoggerLevelName,
+	LoggerLevelNames
+} from './Types';
 
 const LOGGER_PROTECTOR: Symbol = Symbol();
 
@@ -48,6 +51,17 @@ export class Logger {
 		info        : 'blue',
 		debug       : 'cyan',
 		debugEx     : 'grey'
+	};
+
+	static readonly levelNames: Readonly<LoggerLevelNames> = {
+		emerg       : 'emerg',
+		errorRuntime: 'errorRuntime',
+		errorLogic  : 'errorLogic',
+		warn        : 'warn',
+		status      : 'status',
+		info        : 'info',
+		debug       : 'debug',
+		debugEx     : 'debugEx'
 	};
 
 	static createInstance(config: Config = {}): void {
@@ -202,34 +216,34 @@ export class Logger {
 	}
 
 	static emerg(text: string, meta: object = {}): void {
-		Logger.instance.toLog('emerg', text, meta);
+		Logger.log(Logger.levelNames.emerg, text, meta);
 	}
 
 	static errorRuntime(text: string, meta: object = {}): void {
-		Logger.instance.toLog('errorRuntime', text, meta);
+		Logger.log(Logger.levelNames.errorRuntime, text, meta);
 	}
 
 	static errorLogic(text: string, meta: object = {}): void {
-		Logger.instance.toLog('errorLogic', text, meta);
+		Logger.log(Logger.levelNames.errorLogic, text, meta);
 	}
 
 	static warn(text: string, meta: object = {}): void {
-		Logger.instance.toLog('warn', text, meta);
+		Logger.log(Logger.levelNames.warn, text, meta);
 	}
 
 	static status(text: string, meta: object = {}): void {
-		Logger.instance.toLog('status', text, meta);
+		Logger.log(Logger.levelNames.status, text, meta);
 	}
 
 	static info(text: string, meta: object = {}): void {
-		Logger.instance.toLog('info', text, meta);
+		Logger.log(Logger.levelNames.info, text, meta);
 	}
 
 	static debug(text: string, meta: object = {}): void {
-		Logger.instance.toLog('debug', text, meta);
+		Logger.log(Logger.levelNames.debug, text, meta);
 	}
 
 	static debugEx(text: string, meta: object = {}): void {
-		Logger.instance.toLog('debugEx', text, meta);
+		Logger.log(Logger.levelNames.debugEx, text, meta);
 	}
 }
