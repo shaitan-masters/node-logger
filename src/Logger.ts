@@ -31,7 +31,7 @@ export class Logger {
 
 	private static instance: Logger;
 
-	private readonly levels: Readonly<LoggerLevelType> = {
+	readonly levels: Readonly<LoggerLevelType> = {
 		emerg       : 0,
 		errorRuntime: 1,
 		errorLogic  : 2,
