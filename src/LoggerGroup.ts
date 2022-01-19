@@ -1,4 +1,4 @@
-import {LoggerLevelName} from '@app/Types';
+import {LoggerLevelName} from './Types';
 import {Logger} from './Logger';
 
 export class LoggerGroup {
